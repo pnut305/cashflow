@@ -32,10 +32,10 @@
         <span id="assetTotal" class="mini-total">¥0</span>
       </div>
       <div class="grid two">
-        <label>個人口座<input id="personal" inputmode="numeric" type="number" min="0" value="680000"></label>
-        <label>バンド口座<input id="band" inputmode="numeric" type="number" min="0" value="420000"></label>
-        <label>金庫<input id="cash" inputmode="numeric" type="number" min="0" value="100000"></label>
-        <label>FCプール<input id="fc" inputmode="numeric" type="number" min="0" value="130000"></label>
+        <label>みずほ個人口座<input id="mizuhoPersonal" inputmode="numeric" type="number" min="0" value="0"></label>
+        <label>みずほ団体口座<input id="mizuhoGroup" inputmode="numeric" type="number" min="0" value="0"></label>
+        <label>じぶん銀行<input id="jibunBank" inputmode="numeric" type="number" min="0" value="0"></label>
+        <label>金庫<input id="cashSafe" inputmode="numeric" type="number" min="0" value="0"></label>
       </div>
     </section>
 
@@ -44,8 +44,13 @@
         <h2>入金予定</h2>
         <span id="incomeTotal" class="mini-total">¥0</span>
       </div>
-      <div id="incomeRows" class="rows"></div>
-      <button class="secondary" id="addIncome">＋ 入金を追加</button>
+      <div class="grid one">
+        <label>CF入金（毎月15日）<input id="incomeCf" inputmode="numeric" type="number" min="0" value="0"></label>
+        <label>mf入金（毎月25日）<input id="incomeMf" inputmode="numeric" type="number" min="0" value="0"></label>
+        <label>Bitfan入金（毎月30日）<input id="incomeBitfan" inputmode="numeric" type="number" min="0" value="0"></label>
+        <label>確定入金<input id="incomeConfirmed" inputmode="numeric" type="number" min="0" value="0"></label>
+        <label>入金見込み<input id="incomeExpected" inputmode="numeric" type="number" min="0" value="0"></label>
+      </div>
     </section>
 
     <section class="card">
@@ -53,8 +58,14 @@
         <h2>支払い予定</h2>
         <span id="paymentTotal" class="mini-total">¥0</span>
       </div>
-      <div id="paymentRows" class="rows"></div>
-      <button class="secondary" id="addPayment">＋ 支払いを追加</button>
+      <div class="grid one">
+        <label>HBカード（26日払い）<input id="payHb" inputmode="numeric" type="number" min="0" value="0"></label>
+        <label>epos（27日払い）<input id="payEpos" inputmode="numeric" type="number" min="0" value="0"></label>
+        <label>au（翌10日払い）<input id="payAu" inputmode="numeric" type="number" min="0" value="0"></label>
+        <label>給与<input id="paySalary" inputmode="numeric" type="number" min="0" value="340000"></label>
+        <label>車<input id="payCar" inputmode="numeric" type="number" min="0" value="34000"></label>
+        <label>請求書<input id="payInvoice" inputmode="numeric" type="number" min="0" value="0"></label>
+      </div>
     </section>
 
     <section class="card simulator">
@@ -81,15 +92,6 @@
 
     <p class="footnote">端末内に保存されます。銀行口座とは連携しません。</p>
   </main>
-
-  <template id="rowTemplate">
-    <div class="entry-row">
-      <input class="name" type="text" placeholder="項目名">
-      <input class="date" type="date">
-      <input class="amount" inputmode="numeric" type="number" min="0" placeholder="金額">
-      <button class="delete" aria-label="削除">×</button>
-    </div>
-  </template>
 
   <script src="app.js"></script>
 </body>
