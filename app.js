@@ -1,13 +1,15 @@
 const $ = (id) => document.getElementById(id);
 const money = (n) => new Intl.NumberFormat('ja-JP', { style:'currency', currency:'JPY', maximumFractionDigits:0 }).format(Math.round(Number(n)||0));
-const stateKey = 'cashflow-meter-v6';
-const oldStateKeys = ['cashflow-meter-v5','cashflow-meter-v4','cashflow-meter-v3','cashflow-meter-v2'];
+const DATA_VERSION = 7;
+const stateKey = 'cashflow-meter-v7';
+const oldStateKeys = ['cashflow-meter-v6','cashflow-meter-v5','cashflow-meter-v4','cashflow-meter-v3','cashflow-meter-v2'];
 const SAFE_BUFFER = 400000;
 
 const assetIds = ['mizuhoPersonal','mizuhoGroup','jibunBank','cashSafe'];
 const incomeIds = ['incomeCf','incomeMf','incomeBitfan','incomeConfirmed'];
 const expectedIncomeIds = ['incomeExpected'];
 const paymentIds = ['payHb','payEpos','payAu','paySalary','payCar','payInvoice'];
+const cardPaymentIds = ['payHb','payEpos','payAu'];
 const dateIds = ['dateIncomeCf','dateIncomeMf','dateIncomeBitfan','dateIncomeConfirmed','dateIncomeExpected','datePayHb','datePayEpos','datePayAu','datePaySalary','datePayCar','datePayInvoice'];
 const allInputIds = ['referenceDate',...assetIds,...incomeIds,...expectedIncomeIds,...paymentIds,...dateIds,'deferred'];
 
@@ -18,10 +20,10 @@ const parseDate = value => value ? new Date(`${value}T00:00:00`) : null;
 const daysInMonth = (y,m) => new Date(y,m+1,0).getDate();
 const dateAtDay = (y,m,day) => new Date(y,m,Math.min(day,daysInMonth(y,m)));
 
-function nextOccurrence(base, day, forceNextMonth=false){
+function nextOccurrence(base, day){
   let y=base.getFullYear(), m=base.getMonth();
   let d=dateAtDay(y,m,day);
-  if(forceNextMonth || d <= base) d=dateAtDay(y,m+1,day);
+  if(d <= base) d=dateAtDay(y,m+1,day);
   return iso(d);
 }
 function nextMonthEnd(base){
@@ -109,19 +111,64 @@ function statusForBalance(balance){
 }
 
 function renderPaymentStatuses(rows){
-  const paymentDefs=eventDefs.filter(e=>e[3]===-1);
-  paymentDefs.forEach(([amountId,,, ,,,statusId])=>{
+  eventDefs.filter(e=>e[3]===-1).forEach(([amountId,,,,,,statusId])=>{
     const badge=$(statusId);
     const amount=Number($(amountId).value)||0;
     const row=rows.find(r=>r.amountId===amountId);
     badge.className='payment-status';
-    if(amount<=0){ badge.textContent='未入力'; badge.classList.add('empty'); return; }
-    if(!row){ badge.textContent='対象外'; badge.classList.add('empty'); return; }
+    if(amount<=0){ badge.textContent='未入力'; badge.classList.add('empty'); badge.removeAttribute('title'); return; }
+    if(!row){ badge.textContent='対象外'; badge.classList.add('empty'); badge.removeAttribute('title'); return; }
     const status=statusForBalance(row.balance);
     badge.textContent=status.text;
     badge.classList.add(status.cls);
     badge.title=`支払い後残高 ${money(row.balance)}`;
   });
+}
+
+function renderInstallmentAdvice(projection){
+  const title=$('installmentTitle');
+  const detail=$('installmentDetail');
+  const box=$('installmentAdvice');
+  box.className='card installment-advice';
+
+  if(projection.minimum >= SAFE_BUFFER){
+    title.textContent='分割不要';
+    detail.textContent=`最低残高${money(projection.minimum)}で、安全基準の40万円を維持できます。`;
+    box.classList.add('advice-safe');
+    return;
+  }
+
+  const target=SAFE_BUFFER-projection.minimum;
+  const candidates=projection.rows
+    .filter(r=>cardPaymentIds.includes(r.amountId) && r.sign===-1 && r.date<=projection.minimumDate)
+    .sort((a,b)=>b.date.localeCompare(a.date));
+
+  if(!candidates.length){
+    title.textContent='カード分割では解決不可';
+    detail.textContent=`安全圏まで${money(target)}不足していますが、最低点までに分割対象のカード支払いがありません。入金確保か他支払いの調整が必要です。`;
+    box.classList.add('advice-impossible');
+    return;
+  }
+
+  let remaining=target;
+  const plans=[];
+  for(const row of candidates){
+    const amount=Math.min(row.amount,remaining);
+    if(amount>0) plans.push({name:row.name,amount});
+    remaining-=amount;
+    if(remaining<=0) break;
+  }
+
+  if(remaining<=0){
+    title.textContent=`分割候補：${plans.map(p=>p.name).join(' → ')}`;
+    detail.textContent=`合計${money(target)}を未来へ回すと、安全基準40万円まで回復します。目安：${plans.map(p=>`${p.name} ${money(p.amount)}`).join('、')}。`;
+    box.classList.add(projection.minimum<0?'advice-impossible':'advice-risk');
+  }else{
+    const available=target-remaining;
+    title.textContent='カード分割だけでは不足';
+    detail.textContent=`最低点までのカード支払い${money(available)}をすべて未来へ回しても、さらに${money(remaining)}必要です。入金確保か給与・請求書などの支払日調整も必要です。`;
+    box.classList.add('advice-impossible');
+  }
 }
 
 function calculate(){
@@ -137,6 +184,7 @@ function calculate(){
   $('finalBalance').textContent=`最終 ${money(confirmedProjection.balance)}`; $('optimisticBalance').textContent=money(optimisticProjection.balance);
   renderTimeline(confirmedProjection.rows,confirmedProjection.minimumDate);
   renderPaymentStatuses(confirmedProjection.rows);
+  renderInstallmentAdvice(confirmedProjection);
 
   const badge=$('statusBadge'); badge.className='status-badge';
   const min=confirmedProjection.minimum;
@@ -159,20 +207,61 @@ function applyReferenceDate(){
   calculate();
 }
 function collectState(){ return Object.fromEntries(allInputIds.map(id=>[id,$(id).type==='date'?$(id).value:(Number($(id).value)||0)])); }
+
+function migrateState(raw){
+  let source=raw;
+  if(raw && typeof raw==='object' && raw.data && typeof raw.data==='object') source=raw.data;
+  if(!source || typeof source!=='object') source={};
+
+  const reference=source.referenceDate || initialReference;
+  const migrated={...defaults,...source,referenceDate:reference};
+  const generatedDates=dateDefaults(reference);
+  for(const id of dateIds){
+    if(!migrated[id] || !/^\d{4}-\d{2}-\d{2}$/.test(String(migrated[id]))) migrated[id]=generatedDates[id];
+  }
+  for(const id of [...assetIds,...incomeIds,...expectedIncomeIds,...paymentIds,'deferred']){
+    const value=Number(migrated[id]);
+    migrated[id]=Number.isFinite(value) && value>=0 ? value : defaults[id] || 0;
+  }
+  return migrated;
+}
+
+function saveState(showToast=true){
+  localStorage.setItem(stateKey,JSON.stringify({version:DATA_VERSION,data:collectState()}));
+  if(showToast) toast('保存しました');
+}
 function loadState(data){ allInputIds.forEach(id=>{ $(id).value=data[id] ?? defaults[id] ?? ''; }); calculate(); }
-function toast(text){ const t=document.createElement('div'); t.className='toast'; t.textContent=text; document.body.appendChild(t); setTimeout(()=>t.remove(),1500); }
+function toast(text){ const t=document.createElement('div'); t.className='toast'; t.textContent=text; document.body.appendChild(t); setTimeout(()=>t.remove(),1800); }
+
+function loadAndMigrate(){
+  let raw=null;
+  const current=localStorage.getItem(stateKey);
+  if(current){
+    try{ raw=JSON.parse(current); }catch(_){ raw=null; }
+  }
+  if(!raw){
+    for(const key of oldStateKeys){
+      const old=localStorage.getItem(key);
+      if(old){
+        try{ raw=JSON.parse(old); break; }catch(_){ /* continue */ }
+      }
+    }
+  }
+  const migrated=migrateState(raw);
+  loadState(migrated);
+  localStorage.setItem(stateKey,JSON.stringify({version:DATA_VERSION,data:migrated}));
+  if(raw && (!raw.version || raw.version<DATA_VERSION)) toast('保存データをv7へ移行しました');
+}
 
 allInputIds.filter(id=>id!=='referenceDate').forEach(id=>$(id).addEventListener('input',calculate));
 $('referenceDate').addEventListener('input', applyReferenceDate);
 $('referenceDate').addEventListener('change', applyReferenceDate);
-$('saveBtn').addEventListener('click',()=>{ localStorage.setItem(stateKey,JSON.stringify(collectState())); toast('保存しました'); });
-$('resetBtn').addEventListener('click',()=>{ localStorage.removeItem(stateKey); loadState(defaults); toast('初期化しました'); });
-let saved=localStorage.getItem(stateKey);
-if(!saved){
-  for(const key of oldStateKeys){
-    const old=localStorage.getItem(key);
-    if(old){ saved=JSON.stringify({...defaults,...JSON.parse(old),referenceDate:initialReference}); break; }
-  }
-}
-loadState(saved?JSON.parse(saved):defaults);
-if('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js');
+$('saveBtn').addEventListener('click',()=>saveState(true));
+$('resetBtn').addEventListener('click',()=>{
+  localStorage.removeItem(stateKey);
+  loadState(defaults);
+  saveState(false);
+  toast('初期化しました');
+});
+loadAndMigrate();
+if('serviceWorker' in navigator) navigator.serviceWorker.register('./service-worker.js?v=7');

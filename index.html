@@ -7,7 +7,7 @@
   <title>資金繰りメーター</title>
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icon-192.png" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.css?v=7" />
 </head>
 <body>
   <main class="app-shell">
@@ -63,6 +63,12 @@
       <div class="forecast-row"><span>入金見込み込み最終残高</span><strong id="optimisticBalance">¥0</strong></div>
     </section>
 
+    <section id="installmentAdvice" class="card installment-advice">
+      <span class="label">自動分割判定</span>
+      <h2 id="installmentTitle">判定中</h2>
+      <p id="installmentDetail">入力内容から分割の必要性を計算します。</p>
+    </section>
+
     <section class="card simulator">
       <h2>分割シミュレーション</h2>
       <p>直近の支払いから未来へ逃がす金額を入力。</p>
@@ -90,6 +96,6 @@
     <div class="actions"><button id="resetBtn" class="ghost">初期化</button><button id="saveBtn" class="primary">保存</button></div>
     <p class="footnote">端末内に保存されます。銀行口座とは連携しません。</p>
   </main>
-  <script src="app.js"></script>
+  <script src="app.js?v=7"></script>
 </body>
 </html>

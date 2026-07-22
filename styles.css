@@ -90,3 +90,10 @@ button { cursor:pointer; border:0; border-radius:12px; padding:12px 15px; font-w
   .payment-status { min-height:40px; font-size:11px; }
   .reference-note { max-width:160px; }
 }
+
+.installment-advice{border-left:6px solid #9ca3af}
+.installment-advice h2{margin:.35rem 0 .55rem;font-size:1.3rem}
+.installment-advice p{margin:0;line-height:1.6}
+.installment-advice.advice-safe{border-left-color:#16a34a;background:#f0fdf4}
+.installment-advice.advice-risk{border-left-color:#ca8a04;background:#fefce8}
+.installment-advice.advice-impossible{border-left-color:#dc2626;background:#fef2f2}
