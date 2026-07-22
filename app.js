@@ -1,7 +1,7 @@
 const $ = (id) => document.getElementById(id);
 const money = (n) => new Intl.NumberFormat('ja-JP', { style:'currency', currency:'JPY', maximumFractionDigits:0 }).format(Math.round(Number(n)||0));
-const stateKey = 'cashflow-meter-v5';
-const oldStateKeys = ['cashflow-meter-v4','cashflow-meter-v3','cashflow-meter-v2'];
+const stateKey = 'cashflow-meter-v6';
+const oldStateKeys = ['cashflow-meter-v5','cashflow-meter-v4','cashflow-meter-v3','cashflow-meter-v2'];
 const SAFE_BUFFER = 400000;
 
 const assetIds = ['mizuhoPersonal','mizuhoGroup','jibunBank','cashSafe'];
@@ -163,7 +163,8 @@ function loadState(data){ allInputIds.forEach(id=>{ $(id).value=data[id] ?? defa
 function toast(text){ const t=document.createElement('div'); t.className='toast'; t.textContent=text; document.body.appendChild(t); setTimeout(()=>t.remove(),1500); }
 
 allInputIds.filter(id=>id!=='referenceDate').forEach(id=>$(id).addEventListener('input',calculate));
-$('referenceDate').addEventListener('change',applyReferenceDate);
+$('referenceDate').addEventListener('input', applyReferenceDate);
+$('referenceDate').addEventListener('change', applyReferenceDate);
 $('saveBtn').addEventListener('click',()=>{ localStorage.setItem(stateKey,JSON.stringify(collectState())); toast('保存しました'); });
 $('resetBtn').addEventListener('click',()=>{ localStorage.removeItem(stateKey); loadState(defaults); toast('初期化しました'); });
 let saved=localStorage.getItem(stateKey);
