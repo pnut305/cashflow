@@ -77,3 +77,16 @@ button { cursor:pointer; border:0; border-radius:12px; padding:12px 15px; font-w
   .timeline-item { grid-template-columns:66px 1fr; }
   .timeline-balance { grid-column:2; text-align:left; display:flex; justify-content:space-between; gap:8px; }
 }
+.reference-card { border:1px solid #e5e7eb; }
+.reference-note { font-size:11px; color:#6b7280; text-align:right; }
+.payment-row { grid-template-columns:1.25fr .78fr 64px; }
+.payment-status { align-self:end; display:inline-flex; align-items:center; justify-content:center; min-height:42px; padding:8px 7px; border-radius:10px; font-size:12px; font-weight:900; }
+.payment-status.safe { background:#d1fae5; color:#065f46; }
+.payment-status.risk { background:#fef3c7; color:#92400e; }
+.payment-status.impossible { background:#fee2e2; color:#991b1b; }
+.payment-status.empty { background:#f3f4f6; color:#9ca3af; }
+@media (max-width:560px) {
+  .payment-row { grid-template-columns:1fr 116px 58px; gap:7px; }
+  .payment-status { min-height:40px; font-size:11px; }
+  .reference-note { max-width:160px; }
+}

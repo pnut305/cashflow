@@ -17,14 +17,9 @@
       <p class="sub">入出金日を反映し、途中で資金が尽きないか判定。</p>
     </header>
 
-    <section class="card summary-card">
-      <div>
-        <span class="label">直近最低残高</span>
-        <strong id="remaining" class="hero-number">¥0</strong>
-        <span id="minimumDate" class="minimum-date"></span>
-      </div>
-      <div id="statusBadge" class="status-badge">未入力</div>
-      <p id="advice" class="advice">資産と予定を入力してください。</p>
+    <section class="card reference-card">
+      <div class="section-head"><h2>判定基準日</h2><span class="reference-note">この日から直後の予定を自動設定</span></div>
+      <label>現在日<input id="referenceDate" type="date"></label>
     </section>
 
     <section class="card">
@@ -52,13 +47,14 @@
     <section class="card">
       <div class="section-head"><h2>支払い予定</h2><span id="paymentTotal" class="mini-total">¥0</span></div>
       <div class="dated-list">
-        <div class="dated-row"><label>HBカード（26日払い）<input id="payHb" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayHb" type="date"></label></div>
-        <div class="dated-row"><label>epos（27日払い）<input id="payEpos" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayEpos" type="date"></label></div>
-        <div class="dated-row"><label>au（翌10日払い）<input id="payAu" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayAu" type="date"></label></div>
-        <div class="dated-row"><label>給与<input id="paySalary" inputmode="numeric" type="number" min="0" value="340000"></label><label class="date-label">支払日<input id="datePaySalary" type="date"></label></div>
-        <div class="dated-row"><label>車<input id="payCar" inputmode="numeric" type="number" min="0" value="34000"></label><label class="date-label">支払日<input id="datePayCar" type="date"></label></div>
-        <div class="dated-row"><label>請求書<input id="payInvoice" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayInvoice" type="date"></label></div>
+        <div class="dated-row payment-row"><label>HBカード（26日払い）<input id="payHb" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayHb" type="date"></label><span id="statusPayHb" class="payment-status empty">未入力</span></div>
+        <div class="dated-row payment-row"><label>epos（27日払い）<input id="payEpos" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayEpos" type="date"></label><span id="statusPayEpos" class="payment-status empty">未入力</span></div>
+        <div class="dated-row payment-row"><label>au（10日払い）<input id="payAu" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayAu" type="date"></label><span id="statusPayAu" class="payment-status empty">未入力</span></div>
+        <div class="dated-row payment-row"><label>給与<input id="paySalary" inputmode="numeric" type="number" min="0" value="340000"></label><label class="date-label">支払日<input id="datePaySalary" type="date"></label><span id="statusPaySalary" class="payment-status empty">未入力</span></div>
+        <div class="dated-row payment-row"><label>車<input id="payCar" inputmode="numeric" type="number" min="0" value="34000"></label><label class="date-label">支払日<input id="datePayCar" type="date"></label><span id="statusPayCar" class="payment-status empty">未入力</span></div>
+        <div class="dated-row payment-row"><label>請求書<input id="payInvoice" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayInvoice" type="date"></label><span id="statusPayInvoice" class="payment-status empty">未入力</span></div>
       </div>
+      <p class="hint">支払い後残高が40万円以上＝安全、0〜399,999円＝危険、マイナス＝不可。同日の予定は安全側に見積もらず、支払いを先に計算します。</p>
     </section>
 
     <section class="card timeline-card">
@@ -79,6 +75,16 @@
       <div><span>総資産</span><strong id="grandAssets">¥0</strong></div>
       <div><span>確定入金</span><strong id="grandIncome">¥0</strong></div>
       <div><span>支払い予定</span><strong id="grandPayments">¥0</strong></div>
+    </section>
+
+    <section class="card summary-card">
+      <div>
+        <span class="label">直近最低残高</span>
+        <strong id="remaining" class="hero-number">¥0</strong>
+        <span id="minimumDate" class="minimum-date"></span>
+      </div>
+      <div id="statusBadge" class="status-badge">未入力</div>
+      <p id="advice" class="advice">資産と予定を入力してください。</p>
     </section>
 
     <div class="actions"><button id="resetBtn" class="ghost">初期化</button><button id="saveBtn" class="primary">保存</button></div>
