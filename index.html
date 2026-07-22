@@ -1,101 +1,97 @@
 <!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="theme-color" content="#111827" />
-  <title>資金繰りメーター</title>
-  <link rel="manifest" href="manifest.webmanifest" />
-  <link rel="apple-touch-icon" href="icon-192.png" />
-  <link rel="stylesheet" href="styles.css?v=7" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#111827">
+  <title>資金繰りメーター v8</title>
+  <link rel="manifest" href="manifest.webmanifest?v=8">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <link rel="stylesheet" href="styles.css?v=8.0.0">
 </head>
 <body>
-  <main class="app-shell">
-    <header>
-      <p class="eyebrow">MONEY SNAPSHOT</p>
-      <h1>資金繰りメーター</h1>
-      <p class="sub">入出金日を反映し、途中で資金が尽きないか判定。</p>
-    </header>
+<main class="app-shell">
+  <header>
+    <p class="eyebrow">MONEY SNAPSHOT</p>
+    <h1>資金繰りメーター <span class="version">v8</span></h1>
+    <p class="sub">未来の残高推移と、支払い成立可否を日付順に判定。</p>
+  </header>
 
-    <section class="card reference-card">
-      <div class="section-head"><h2>判定基準日</h2><span class="reference-note">この日から直後の予定を自動設定</span></div>
-      <label>現在日<input id="referenceDate" type="date"></label>
-    </section>
+  <section class="card reference-card">
+    <div class="section-head"><h2>判定基準日</h2><span class="reference-note">変更すると定期予定日を再設定</span></div>
+    <label>現在日<input id="referenceDate" type="date"></label>
+  </section>
 
-    <section class="card">
-      <div class="section-head"><h2>現在資産</h2><span id="assetTotal" class="mini-total">¥0</span></div>
-      <div class="grid two">
-        <label>みずほ個人口座<input id="mizuhoPersonal" inputmode="numeric" type="number" min="0" value="0"></label>
-        <label>みずほ団体口座<input id="mizuhoGroup" inputmode="numeric" type="number" min="0" value="0"></label>
-        <label>じぶん銀行<input id="jibunBank" inputmode="numeric" type="number" min="0" value="0"></label>
-        <label>金庫<input id="cashSafe" inputmode="numeric" type="number" min="0" value="0"></label>
-      </div>
-    </section>
+  <section class="card">
+    <div class="section-head"><h2>現在資産</h2><span id="assetTotal" class="mini-total">¥0</span></div>
+    <div class="grid two">
+      <label>みずほ個人口座<input id="mizuhoPersonal" inputmode="numeric" type="number" min="0"></label>
+      <label>みずほ団体口座<input id="mizuhoGroup" inputmode="numeric" type="number" min="0"></label>
+      <label>じぶん銀行<input id="jibunBank" inputmode="numeric" type="number" min="0"></label>
+      <label>金庫<input id="cashSafe" inputmode="numeric" type="number" min="0"></label>
+    </div>
+  </section>
 
-    <section class="card">
-      <div class="section-head"><h2>入金予定</h2><span id="incomeTotal" class="mini-total">¥0</span></div>
-      <div class="dated-list">
-        <div class="dated-row"><label>CF入金（毎月15日）<input id="incomeCf" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">入金日<input id="dateIncomeCf" type="date"></label></div>
-        <div class="dated-row"><label>mf入金（毎月25日）<input id="incomeMf" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">入金日<input id="dateIncomeMf" type="date"></label></div>
-        <div class="dated-row"><label>Bitfan入金（毎月30日）<input id="incomeBitfan" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">入金日<input id="dateIncomeBitfan" type="date"></label></div>
-        <div class="dated-row"><label>確定入金<input id="incomeConfirmed" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">入金日<input id="dateIncomeConfirmed" type="date"></label></div>
-        <div class="dated-row expected"><label>入金見込み<input id="incomeExpected" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">見込日<input id="dateIncomeExpected" type="date"></label></div>
-      </div>
-      <p class="hint">入金見込みは安全判定に含めず、参考残高だけに反映します。</p>
-    </section>
+  <section class="card">
+    <div class="section-head"><h2>入金予定</h2><span id="incomeTotal" class="mini-total">¥0</span></div>
+    <div class="dated-list">
+      <div class="dated-row"><label>CF入金（毎月15日）<input id="incomeCf" inputmode="numeric" type="number" min="0"></label><label class="date-label">入金日<input id="dateIncomeCf" type="date"></label></div>
+      <div class="dated-row"><label>mf入金（毎月25日）<input id="incomeMf" inputmode="numeric" type="number" min="0"></label><label class="date-label">入金日<input id="dateIncomeMf" type="date"></label></div>
+      <div class="dated-row"><label>Bitfan入金（毎月30日）<input id="incomeBitfan" inputmode="numeric" type="number" min="0"></label><label class="date-label">入金日<input id="dateIncomeBitfan" type="date"></label></div>
+      <div class="dated-row"><label>確定入金<input id="incomeConfirmed" inputmode="numeric" type="number" min="0"></label><label class="date-label">入金日<input id="dateIncomeConfirmed" type="date"></label></div>
+      <div class="dated-row expected"><label>入金見込み<input id="incomeExpected" inputmode="numeric" type="number" min="0"></label><label class="date-label">見込日<input id="dateIncomeExpected" type="date"></label></div>
+    </div>
+    <p class="hint">入金見込みは判定に含めず、参考残高だけに反映。</p>
+  </section>
 
-    <section class="card">
-      <div class="section-head"><h2>支払い予定</h2><span id="paymentTotal" class="mini-total">¥0</span></div>
-      <div class="dated-list">
-        <div class="dated-row payment-row"><label>HBカード（26日払い）<input id="payHb" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayHb" type="date"></label><span id="statusPayHb" class="payment-status empty">未入力</span></div>
-        <div class="dated-row payment-row"><label>epos（27日払い）<input id="payEpos" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayEpos" type="date"></label><span id="statusPayEpos" class="payment-status empty">未入力</span></div>
-        <div class="dated-row payment-row"><label>au（10日払い）<input id="payAu" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayAu" type="date"></label><span id="statusPayAu" class="payment-status empty">未入力</span></div>
-        <div class="dated-row payment-row"><label>給与<input id="paySalary" inputmode="numeric" type="number" min="0" value="340000"></label><label class="date-label">支払日<input id="datePaySalary" type="date"></label><span id="statusPaySalary" class="payment-status empty">未入力</span></div>
-        <div class="dated-row payment-row"><label>車<input id="payCar" inputmode="numeric" type="number" min="0" value="34000"></label><label class="date-label">支払日<input id="datePayCar" type="date"></label><span id="statusPayCar" class="payment-status empty">未入力</span></div>
-        <div class="dated-row payment-row"><label>請求書<input id="payInvoice" inputmode="numeric" type="number" min="0" value="0"></label><label class="date-label">支払日<input id="datePayInvoice" type="date"></label><span id="statusPayInvoice" class="payment-status empty">未入力</span></div>
-      </div>
-      <p class="hint">支払い後残高が40万円以上＝安全、0〜399,999円＝危険、マイナス＝不可。同日の予定は安全側に見積もらず、支払いを先に計算します。</p>
-    </section>
+  <section class="card">
+    <div class="section-head"><h2>支払い予定</h2><span id="paymentTotal" class="mini-total">¥0</span></div>
+    <div class="dated-list">
+      <div class="dated-row payment-row"><label>HBカード（26日）<input id="payHb" inputmode="numeric" type="number" min="0"></label><label class="date-label">支払日<input id="datePayHb" type="date"></label><span id="statusPayHb" class="payment-status empty">未入力</span></div>
+      <div class="dated-row payment-row"><label>epos（27日）<input id="payEpos" inputmode="numeric" type="number" min="0"></label><label class="date-label">支払日<input id="datePayEpos" type="date"></label><span id="statusPayEpos" class="payment-status empty">未入力</span></div>
+      <div class="dated-row payment-row"><label>au（10日）<input id="payAu" inputmode="numeric" type="number" min="0"></label><label class="date-label">支払日<input id="datePayAu" type="date"></label><span id="statusPayAu" class="payment-status empty">未入力</span></div>
+      <div class="dated-row payment-row"><label>給与（25日）<input id="paySalary" inputmode="numeric" type="number" min="0"></label><label class="date-label">支払日<input id="datePaySalary" type="date"></label><span id="statusPaySalary" class="payment-status empty">未入力</span></div>
+      <div class="dated-row payment-row"><label>車（25日）<input id="payCar" inputmode="numeric" type="number" min="0"></label><label class="date-label">支払日<input id="datePayCar" type="date"></label><span id="statusPayCar" class="payment-status empty">未入力</span></div>
+      <div class="dated-row payment-row"><label>請求書<input id="payInvoice" inputmode="numeric" type="number" min="0"></label><label class="date-label">支払日<input id="datePayInvoice" type="date"></label><span id="statusPayInvoice" class="payment-status empty">未入力</span></div>
+    </div>
+    <p class="hint">支払い後40万円以上＝安全、0〜399,999円＝危険、マイナス＝不可。同日は支払いを先に計算。</p>
+  </section>
 
-    <section class="card timeline-card">
-      <div class="section-head"><h2>資金タイムライン</h2><span id="finalBalance" class="mini-total">¥0</span></div>
-      <div id="timeline" class="timeline"></div>
-      <div class="forecast-row"><span>入金見込み込み最終残高</span><strong id="optimisticBalance">¥0</strong></div>
-    </section>
+  <section class="card timeline-card">
+    <div class="section-head"><h2>資金タイムライン</h2><span id="finalBalance" class="mini-total">最終 ¥0</span></div>
+    <div id="timeline" class="timeline"></div>
+    <div class="forecast-row"><span>入金見込み込み最終残高</span><strong id="optimisticBalance">¥0</strong></div>
+  </section>
 
-    <section id="installmentAdvice" class="card installment-advice">
-      <span class="label">自動分割判定</span>
-      <h2 id="installmentTitle">判定中</h2>
-      <p id="installmentDetail">入力内容から分割の必要性を計算します。</p>
-    </section>
+  <section id="installmentAdvice" class="card installment-advice">
+    <span class="label">自動分割判定</span>
+    <h2 id="installmentTitle">計算待ち</h2>
+    <p id="installmentDetail">金額と日付を入力すると判定します。</p>
+  </section>
 
-    <section class="card simulator">
-      <h2>分割シミュレーション</h2>
-      <p>直近の支払いから未来へ逃がす金額を入力。</p>
-      <label>直近支払いの減額<input id="deferred" inputmode="numeric" type="number" min="0" value="0"></label>
-      <div class="sim-result"><span>減額後の最低残高</span><strong id="simRemaining">¥0</strong></div>
-    </section>
+  <section class="card simulator">
+    <h2>分割シミュレーション</h2>
+    <p>支払いから未来へ回す合計額を入力。</p>
+    <label>今回減らす支払額<input id="deferred" inputmode="numeric" type="number" min="0"></label>
+    <div class="sim-result"><span>減額後の最低残高</span><strong id="simRemaining">¥0</strong></div>
+  </section>
 
-    <section class="card breakdown">
-      <h2>内訳</h2>
-      <div><span>総資産</span><strong id="grandAssets">¥0</strong></div>
-      <div><span>確定入金</span><strong id="grandIncome">¥0</strong></div>
-      <div><span>支払い予定</span><strong id="grandPayments">¥0</strong></div>
-    </section>
+  <section class="card breakdown">
+    <h2>内訳</h2>
+    <div><span>総資産</span><strong id="grandAssets">¥0</strong></div>
+    <div><span>確定入金</span><strong id="grandIncome">¥0</strong></div>
+    <div><span>支払い予定</span><strong id="grandPayments">¥0</strong></div>
+  </section>
 
-    <section class="card summary-card">
-      <div>
-        <span class="label">直近最低残高</span>
-        <strong id="remaining" class="hero-number">¥0</strong>
-        <span id="minimumDate" class="minimum-date"></span>
-      </div>
-      <div id="statusBadge" class="status-badge">未入力</div>
-      <p id="advice" class="advice">資産と予定を入力してください。</p>
-    </section>
+  <section class="card summary-card">
+    <div><span class="label">直近最低残高</span><strong id="remaining" class="hero-number">¥0</strong><span id="minimumDate" class="minimum-date"></span></div>
+    <div id="statusBadge" class="status-badge">未入力</div>
+    <p id="advice" class="advice">資産と予定を入力してください。</p>
+  </section>
 
-    <div class="actions"><button id="resetBtn" class="ghost">初期化</button><button id="saveBtn" class="primary">保存</button></div>
-    <p class="footnote">端末内に保存されます。銀行口座とは連携しません。</p>
-  </main>
-  <script src="app.js?v=7"></script>
+  <div class="actions"><button id="resetBtn" class="ghost">初期化</button><button id="saveBtn" class="primary">保存</button></div>
+  <p class="footnote">端末内に保存。銀行口座とは連携しません。</p>
+</main>
+<script src="app.js?v=8.0.0"></script>
 </body>
 </html>
